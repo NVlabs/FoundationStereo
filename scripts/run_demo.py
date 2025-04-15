@@ -33,6 +33,8 @@ if __name__=="__main__":
   parser.add_argument('--denoise_cloud', type=int, default=1, help='whether to denoise the point cloud')
   parser.add_argument('--denoise_nb_points', type=int, default=30, help='number of points to consider for radius outlier removal')
   parser.add_argument('--denoise_radius', type=float, default=0.03, help='radius to use for outlier removal')
+
+  parser.add_argument('--zed_img', default=None, type=str, help='path to ZED stereo image (left|right horizontally stacked)')
   args = parser.parse_args()
 
   set_logging_format()
@@ -51,25 +53,48 @@ if __name__=="__main__":
   logging.info(f"Using pretrained model from {ckpt_dir}")
 
   model = FoundationStereo(args)
-
-  ckpt = torch.load(ckpt_dir)
+  # ckpt = torch.load(ckpt_dir) # deprecated method
+  ckpt = torch.load(ckpt_dir, weights_only=False)
   logging.info(f"ckpt global_step:{ckpt['global_step']}, epoch:{ckpt['epoch']}")
   model.load_state_dict(ckpt['model'])
 
   model.cuda()
   model.eval()
 
-  code_dir = os.path.dirname(os.path.realpath(__file__))
-  img0 = imageio.imread(args.left_file)
-  img1 = imageio.imread(args.right_file)
+  if args.zed_img is not None:  # Directly Read Img from ZED Camera
+    zed_image = imageio.imread(args.zed_img)
+
+    if zed_image.shape[2] == 4:  # RGBA → RGB (IMG from ZED is RGBA format)
+      zed_image = zed_image[:, :, :3]
+
+    H, W2, C = zed_image.shape
+    W = W2 // 2
+
+    img0 = zed_image[:, :W, :]
+    img1 = zed_image[:, W:, :]
+    img0_ori = img0.copy()
+    logging.info(f"Loaded ZED stereo image with shape: {img0.shape}")
+  else:
+    img0 = imageio.imread(args.left_file)
+    if img0.shape[2] == 4:
+      img0 = img0[:, :, :3]
+    img1 = imageio.imread(args.right_file)
+    if img1.shape[2] == 4:
+      img1 = img1[:, :, :3]
+    img0_ori = img0.copy()
+    logging.info(f"img0: {img0.shape}")
+
+  img0_ori = img0.copy()
+
   scale = args.scale
   assert scale<=1, "scale must be <=1"
+
   img0 = cv2.resize(img0, fx=scale, fy=scale, dsize=None)
   img1 = cv2.resize(img1, fx=scale, fy=scale, dsize=None)
   H,W = img0.shape[:2]
-  img0_ori = img0.copy()
   logging.info(f"img0: {img0.shape}")
 
+  ###
   img0 = torch.as_tensor(img0).cuda().float()[None].permute(0,3,1,2)
   img1 = torch.as_tensor(img1).cuda().float()[None].permute(0,3,1,2)
   padder = InputPadder(img0.shape, divis_by=32, force_square=False)

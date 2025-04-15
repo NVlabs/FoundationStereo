@@ -59,6 +59,12 @@ python scripts/run_demo.py --left_file ./assets/left.png --right_file ./assets/r
 ```
 You can see output point cloud.
 
+---
+# Run demo with ZED Image
+```PYTHON
+ python scripts/run_demo.py --zed_img ./assets/zed_stereo.png --ckpt_dir ./pretrained_models/23-51-11/model_best_bp2.pth   --out_dir ./test_outputs/
+```
+
 <p align="center">
   <img src="./teaser/output.jpg" width="700"/>
 </p>
