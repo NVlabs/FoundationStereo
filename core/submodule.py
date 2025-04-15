@@ -16,7 +16,8 @@ from torch import einsum
 code_dir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(f'{code_dir}/../')
 from Utils import *
-from flash_attn import flash_attn_qkvpacked_func, flash_attn_func
+
+# from flash_attn import flash_attn_qkvpacked_func, flash_attn_func # Fixme：Windows 下不支持此包
 
 
 def _is_contiguous(tensor: torch.Tensor) -> bool:
@@ -221,7 +222,9 @@ class FlashMultiheadAttention(nn.Module):
         K = K.view(K.size(0), K.size(1), self.num_heads, self.head_dim)
         V = V.view(V.size(0), V.size(1), self.num_heads, self.head_dim)
 
-        attn_output = flash_attn_func(Q, K, V, window_size=window_size)  # Replace with actual FlashAttention function
+        # attn_output = flash_attn_func(Q, K, V, window_size=window_size)  # Replace with actual FlashAttention function
+        attn_weights = torch.softmax(Q @ K.transpose(-2, -1) / math.sqrt(Q.size(-1)), dim=-1)   # 支持 Windows
+        attn_output = attn_weights @ V
 
         attn_output = attn_output.reshape(B,L,-1)
         output = self.out_proj(attn_output)
