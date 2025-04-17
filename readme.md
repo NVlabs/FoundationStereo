@@ -1,3 +1,36 @@
+## 1X Specific Instructions
+
+### Installation
+
+I found using uv / pip to be much easier than conda.
+```
+uv venv --python=3.9
+source .venv/bin/activate
+uv pip install -r requirements.txt
+```
+
+### Usage
+
+- Exporting stereo images and intrinsics from a NEO log:
+  ```
+  python neo/extract_rectify_imgs.py --video DATA/videos/test1.mp4 --ts 0.5 --output_dir DATA/imgs/test1 --camera_info DATA/shm_raw_camera_info.json --output_size=768
+  ```
+
+- Running the FoundationStereo demo:
+  - Follow official instructions below to download weights to `pretrained_models/`
+  - Run the demo script:
+    ```
+    python scripts/run_demo.py --left_file DATA/imgs/test1/left.jpg --right_file DATA/imgs/test1/right.jpg --ckpt_dir ./pretrained_models/11-33-40/model_best_bp2.pth --out_dir output/ --intrinsic_file DATA/imgs/shake3/intrinsics.txt --valid_iters=4
+    ```
+
+- Exporting to ONNX:
+  - Follow official instructions below to disable xformers and flash attention
+  - Run the export script:
+    ```
+    python scripts/make_onnx.py --save_path ./weight/foundation_stereo_768_4.onnx --ckpt_dir ./pretrained_models/11-33-40/model_best_bp2.pth --height 768 --width 768 --valid_iters 4 
+    ```
+
+
 # FoundationStereo: Zero-Shot Stereo Matching
 
 This is the official implementation of our paper accepted by CVPR 2025 Oral (**All strong accept**)
