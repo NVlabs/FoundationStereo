@@ -5,7 +5,7 @@
 
 from collections import OrderedDict
 
-import torch,pdb
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -47,11 +47,6 @@ class DepthEncoderDecoder(nn.Module):
     def extract_feat(self, img):
         """Extract features from images."""
         return self.backbone(img)
-
-    def forward_multiscale_features(self, img, img_metas):
-        x = self.extract_feat(img)
-        out:dict = self.decode_head.forward_multiscale_features(x, img_metas)
-        return out
 
     def encode_decode(self, img, img_metas, rescale=True, size=None):
         """Encode images with backbone and decode into a depth estimation
