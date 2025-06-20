@@ -3,7 +3,7 @@
 # This source code is licensed under the Apache License, Version 2.0
 # found in the LICENSE file in the root directory of this source tree.
 
-import copy,pdb
+import copy
 from functools import partial
 import math
 import warnings
@@ -745,17 +745,3 @@ class DPTHead(DepthBaseDecodeHead):
         out = self.project(out)
         out = self.depth_pred(out)
         return out
-
-
-    def forward_multiscale_features(self, inputs, img_metas):
-        assert len(inputs) == self.num_reassemble_blocks
-        x = [inp for inp in inputs]
-        x = self.reassemble_blocks(x)
-        x = [self.convs[i](feature) for i, feature in enumerate(x)]
-        x = {
-          4: x[0],
-          8: x[1],
-          16: x[2],
-          32: x[3],
-        }
-        return x
