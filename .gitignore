@@ -4,3 +4,8 @@ output/*
 weight/
 __pycache__
 DATA/*
+test_outputs/*
+data/*
+
+test_image.png
+test_depth.png

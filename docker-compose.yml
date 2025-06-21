@@ -1,0 +1,24 @@
+version: '3.8'
+services:
+  foundation_stereo:
+    build:
+      context: .
+      dockerfile: docker/dockerfile
+    image: foundation_stereo_img  # You can customize this image name
+    runtime: nvidia  # This enables NVIDIA GPU access
+    volumes:
+      - .:/workspace  # Mounts the current directory to /workspace in the container
+      
+    working_dir: /workspace  # Sets the working directory in the container
+    stdin_open: true  # Keeps STDIN open even if not attached
+    tty: true        # Allocates a pseudo-TTY
+    # Optional: If you need to expose ports
+    # ports:
+    #   - "8888:8888" # Example for Jupyter Lab
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              count: all # or specify a number e.g., 1 

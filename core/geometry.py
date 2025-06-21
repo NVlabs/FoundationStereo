@@ -30,7 +30,7 @@ class Combined_Geo_Encoding_Volume:
 
         init_corr = init_corr.reshape(b*h*w, 1, 1, w2)
         self.geo_volume_pyramid.append(geo_volume)
-        self.init_corr_pyramid.append(init_corr)
+        self.init_corr_pyramid.append(init_corr.contiguous())
         for i in range(self.num_levels-1):
             geo_volume = F.avg_pool2d(geo_volume, [1,2], stride=[1,2])
             self.geo_volume_pyramid.append(geo_volume)
