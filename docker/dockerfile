@@ -34,6 +34,8 @@ RUN conda activate my &&\
     pip install xformers==0.0.28.post1 --index-url https://download.pytorch.org/whl/cu124 &&\
     pip install onnx onnxruntime-gpu
 
+RUN pip install pyarrow fastparquet boto3 zstandard
+
 ENV SHELL=/bin/bash
 RUN ln -sf /bin/bash /bin/sh
 

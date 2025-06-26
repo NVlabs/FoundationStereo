@@ -221,7 +221,7 @@ class FlashMultiheadAttention(nn.Module):
         K = K.view(K.size(0), K.size(1), self.num_heads, self.head_dim)
         V = V.view(V.size(0), V.size(1), self.num_heads, self.head_dim)
 
-        attn_output = flash_attn_func(Q, K, V, window_size=window_size)  # Replace with actual FlashAttention function
+        attn_output = F.scaled_dot_product_attention(Q, K, V)  # Replace with actual FlashAttention function
 
         attn_output = attn_output.reshape(B,L,-1)
         output = self.out_proj(attn_output)
