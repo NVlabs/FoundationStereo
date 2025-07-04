@@ -47,7 +47,7 @@ RUN pip3 install onnxruntime-gpu onnx \
 RUN cd / &&  wget https://developer.download.nvidia.com/compute/tensorrt/10.11.0/local_installers/nv-tensorrt-local-repo-ubuntu2004-10.11.0-cuda-12.9_1.0-1_amd64.deb
 RUN apt install ./nv-tensorrt-local-repo-ubuntu2004-10.11.0-cuda-12.9_1.0-1_amd64.deb
 
-RUN echo 'alias trtexec="/usr/src/tensorrt/bin/trtexec"' >> ~/.bashrc && source ~/.bashrc 
+RUN echo 'alias trtexec="/usr/src/tensorrt/bin/trtexec"' >> ~/.bashrc && source ~/.bashrc
 
 ENV SHELL=/bin/bash
 RUN ln -sf /bin/bash /bin/sh

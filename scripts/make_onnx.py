@@ -23,10 +23,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--save_path', type=str, default=f'{code_dir}/../output/foundation_stereo.onnx', help='Path to save results.')
     parser.add_argument('--ckpt_dir', default=f'{code_dir}/../pretrained_models/23-51-11/model_best_bp2.pth', type=str, help='pretrained model path')
-    parser.add_argument('--height', type=int, default=480)
-    parser.add_argument('--width', type=int, default=640)
+    parser.add_argument('--height', type=int, default=448)
+    parser.add_argument('--width', type=int, default=672)
     parser.add_argument('--valid_iters', type=int, default=16, help='number of flow-field updates during forward pass')
-
     args = parser.parse_args()
     os.makedirs(os.path.dirname(args.save_path), exist_ok=True)
 

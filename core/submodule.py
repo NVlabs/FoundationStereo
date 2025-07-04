@@ -11,8 +11,6 @@ import torch,pdb,os,sys
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
-from einops import rearrange
-from torch import einsum
 code_dir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(f'{code_dir}/../')
 from Utils import *

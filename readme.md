@@ -20,6 +20,12 @@ Tremendous progress has been made in deep stereo matching to excel on benchmark 
   <img src="./teaser/input_output.gif" width="600"/>
 </p>
 
+# Changelog
+| Date       | Description                                      |
+|------------|--------------------------------------------------|
+| 2024/07/03 | Improve ONNX and TRT support. Add support for Jetson |
+
+
 # Leaderboards 🏆
 We obtained the 1st place on the world-wide [Middlebury leaderboard](https://vision.middlebury.edu/stereo/eval3/) and [ETH3D leaderboard](https://www.eth3d.net/low_res_two_view).
 
@@ -82,59 +88,52 @@ Tips:
 
 
 
-# ONNX/TensorRT Inference (Experimental)
-To create ONNX models:
-- Make [this change](https://github.com/NVlabs/FoundationStereo/issues/13#issuecomment-2708791825) to replace flash-attention
+# ONNX/TensorRT(TRT) Inference
+
+We only support docker setup for ONNX/TRT version.
+
+- Build docker (tested on NVIDIA Driver Version: 560.35.03, CUDA Version: 12.6)
+```bash
+export DIR=$(pwd)
+cd docker && docker build --network host -t foundation_stereo .
+bash run_container.sh
+cd /
+git clone https://github.com/onnx/onnx-tensorrt.git
+cd onnx-tensorrt
+python3 setup.py install
+apt-get install -y libnvinfer-dispatch10 libnvinfer-bin tensorrt
+cd $DIR
+```
+
 
 - Make ONNX:
 ```
 export XFORMERS_DISABLED=1
-python scripts/make_onnx.py --save_path ./output/foundation_stereo.onnx --ckpt_dir ./pretrained_models/23-51-11/model_best_bp2.pth --height 480 --width 640 --valid_iters 22
-```
-- Convert ONNX to TensorRT:
-```
-trtexec --onnx=./output/foundation_stereo.onnx --saveEngine=./output/foundation_stereo.engine --fp16 --verbose
+python scripts/make_onnx.py --save_path ./pretrained_models/foundation_stereo.onnx --ckpt_dir ./pretrained_models/23-51-11/model_best_bp2.pth --height 448 --width 672 --valid_iters 20
 ```
 
-We have observed 6X speed on the same GPU 3090 with TensorRT FP16. Although how much it speeds up depends on various factors, we recommend trying it out if you care about faster inference. Also remember to adjust the args setting based on your need.
+- Convert to TRT:
+```
+trtexec --onnx=pretrained_models/foundation_stereo.onnx --verbose --saveEngine=pretrained_models/foundation_stereo.plan --fp16
+```
 
-This feature is experimental as of now and contributions are welcome!
-
-## Docker Installation
-Tested on NVIDIA RTX A6000 Ada
-Driver Version: 560.35.03      
-CUDA Version: 12.6 
-
-
-```bash
-docker build --network host -f docker/dockerfile -t foundation_stereo .
-
-bash docker/run_container.sh
-
-cd ..
-git clone https://github.com/onnx/onnx-tensorrt.git
-cd onnx-tensorrt
-python3 setup.py install
-
-apt-get install -y libnvinfer-dispatch10 \
-  libnvinfer-bin \
-  tensorrt 
-
-cd ../FoundationStereo
-trtexec --onnx=pretrained_models/foundation_stereo/foundation.onnx --verbose --saveEngine=pretrained_models/foundation_stereo/foundation.plan --fp16	
-
+- Run TRT:
+```
 python scripts/run_demo_tensorrt.py \
         --left_img ${PWD}/assets/left.png \
         --right_img ${PWD}/assets/right.png \
         --save_path ${PWD}/output \
-        --pretrained pretrained_models/foundation_stereo/foundation.plan \
-        --hiera \
-        --valid_iters 32 \
-        --height 288 \
-        --width 480 \
+        --pretrained pretrained_models/foundation_stereo.plan \
+        --height 448 \
+        --width 672 \
         --pc \
-        --z_far 10.0
+        --z_far 100.0
 ```
+
+We have observed 6X speed on the same GPU 3090 with TensorRT FP16. Although how much it speeds up depends on various factors, we recommend trying it out if you care about faster inference. Also remember to adjust the args setting based on your need.
+
+# Running on Jetson
+Please refer to [readme_jetson.md](readme_jetson.md).
 
 # FSD Dataset
 <p align="center">
