@@ -71,7 +71,7 @@ class Combined_Geo_Encoding_Volume:
         _, _, _, W2 = fmap2.shape
         fmap1 = fmap1.reshape(B, D, H, W1)
         fmap2 = fmap2.reshape(B, D, H, W2)
-        with torch.cuda.amp.autocast(enabled=False):
+        with torch.amp.autocast(device_type='cuda' if torch.cuda.is_available() else 'cpu', enabled=False):
           corr = torch.einsum('aijk,aijh->ajkh', F.normalize(fmap1.float(), dim=1), F.normalize(fmap2.float(), dim=1))
         corr = corr.reshape(B, H, W1, 1, W2)
         return corr

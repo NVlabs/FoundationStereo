@@ -52,7 +52,7 @@ if __name__=="__main__":
 
   model = FoundationStereo(args)
 
-  ckpt = torch.load(ckpt_dir)
+  ckpt = torch.load(ckpt_dir, weights_only=False)
   logging.info(f"ckpt global_step:{ckpt['global_step']}, epoch:{ckpt['epoch']}")
   model.load_state_dict(ckpt['model'])
 

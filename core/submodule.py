@@ -388,7 +388,7 @@ def groupwise_correlation(fea1, fea2, num_groups):
     channels_per_group = C // num_groups
     fea1 = fea1.reshape(B, num_groups, channels_per_group, H, W)
     fea2 = fea2.reshape(B, num_groups, channels_per_group, H, W)
-    with torch.cuda.amp.autocast(enabled=False):
+    with torch.amp.autocast(device_type='cuda' if torch.cuda.is_available() else 'cpu', enabled=False):
       cost = (F.normalize(fea1.float(), dim=2) * F.normalize(fea2.float(), dim=2)).sum(dim=2)  #!NOTE Divide first for numerical stability
     assert cost.shape == (B, num_groups, H, W)
     return cost

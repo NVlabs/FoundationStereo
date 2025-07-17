@@ -8,9 +8,9 @@ dependencies:
   - python=3.11
   - pip
   - pip:
-    - torch==2.4.1
-    - torchvision==0.19.1
-    - torchaudio==2.4.1
+    - torch==2.7.1  
+    - torchvision==0.22.1
+    - torchaudio==2.7.1
     - scikit-image
     - omegaconf
     - opencv-contrib-python
@@ -31,5 +31,5 @@ dependencies:
     - einops
     - gdown
     - nodejs
-    - xformers==0.0.28.post1
+    - pandas
     - huggingface-hub

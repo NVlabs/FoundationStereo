@@ -4,3 +4,7 @@ output/*
 weight/
 __pycache__
 DATA/*
+
+testImages/CameraCalibration/*
+test_data/*
+test_outputs/*
