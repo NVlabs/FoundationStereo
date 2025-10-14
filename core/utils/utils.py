@@ -48,7 +48,7 @@ def bilinear_sampler(img, coords, mode='bilinear', mask=False, low_memory=False)
     xgrid = 2*xgrid/(W-1) - 1   # Normalize to [-1,1]
     assert torch.unique(ygrid).numel() == 1 and H == 1 # This is a stereo problem
     grid = torch.cat([xgrid, ygrid], dim=-1).to(img.dtype)
-    img = F.grid_sample(img, grid, align_corners=True)
+    img = F.grid_sample(img.contiguous(), grid.contiguous(), align_corners=True)
     if mask:
         mask = (xgrid > -1) & (ygrid > -1) & (xgrid < 1) & (ygrid < 1)
         return img, mask.float()
