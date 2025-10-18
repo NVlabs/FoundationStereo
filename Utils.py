@@ -136,6 +136,6 @@ def vis_disparity(disp, min_val=None, max_val=None, invalid_thres=np.inf, color_
 
 def depth_uint8_decoding(depth_uint8, scale=1000):
   depth_uint8 = depth_uint8.astype(float)
-  out = depth_uint8[...,0]*255*255 + depth_uint8[...,1]*255 + depth_uint8[...,2]
+  out = depth_uint8[...,0]*256*256 + depth_uint8[...,1]*256 + depth_uint8[...,2]
   return out/float(scale)
 
