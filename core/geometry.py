@@ -49,14 +49,12 @@ class Combined_Geo_Encoding_Volume:
             x0 = self.dx + disp.reshape(b*h*w, 1, 1, 1) / 2**i
             y0 = torch.zeros_like(x0)
 
-            disp_lvl = torch.cat([x0,y0], dim=-1)
-            geo_volume = bilinear_sampler(geo_volume, disp_lvl, low_memory=low_memory)
+            geo_volume = bilinear_sampler(geo_volume, x0)
             geo_volume = geo_volume.reshape(b, h, w, -1)
 
             init_corr = self.init_corr_pyramid[i]
             init_x0 = coords.reshape(b*h*w, 1, 1, 1)/2**i - disp.reshape(b*h*w, 1, 1, 1) / 2**i + self.dx   # X on right image
-            init_coords_lvl = torch.cat([init_x0,y0], dim=-1)
-            init_corr = bilinear_sampler(init_corr, init_coords_lvl, low_memory=low_memory)
+            init_corr = bilinear_sampler(init_corr, init_x0)
             init_corr = init_corr.reshape(b, h, w, -1)
 
             out_pyramid.append(geo_volume)
