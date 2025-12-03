@@ -214,11 +214,12 @@ class FlashMultiheadAttention(nn.Module):
         K = self.k_proj(key)
         V = self.v_proj(value)
 
-        Q = Q.view(Q.size(0), Q.size(1), self.num_heads, self.head_dim)
-        K = K.view(K.size(0), K.size(1), self.num_heads, self.head_dim)
-        V = V.view(V.size(0), V.size(1), self.num_heads, self.head_dim)
-
-        attn_output = F.scaled_dot_product_attention(Q, K, V)
+        # (B, L, H, Dh) -> (B, H, L, Dh)
+        Q = Q.view(B, L, self.num_heads, self.head_dim).transpose(1, 2)
+        K = K.view(B, L, self.num_heads, self.head_dim).transpose(1, 2)
+        V = V.view(B, L, self.num_heads, self.head_dim).transpose(1, 2)
+        
+        attn_output = F.scaled_dot_product_attention(Q, K, V).permute(0, 2, 1, 3)
 
         attn_output = attn_output.reshape(B,L,-1)
         output = self.out_proj(attn_output)
