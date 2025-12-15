@@ -23,6 +23,7 @@ Tremendous progress has been made in deep stereo matching to excel on benchmark 
 # Changelog
 | Date       | Description                                                                                                         |
 |------------|---------------------------------------------------------------------------------------------------------------------|
+| 2025/12/15 | Checkout our real-time model [Fast-FoundationStereo](https://nvlabs.github.io/Fast-FoundationStereo/)
 | 2025/08/05 | Our commercial model is available now at [here](https://catalog.ngc.nvidia.com/orgs/nvidia/teams/tao/models/foundationstereo)! |
 | 2025/07/03 | Improve ONNX and TRT support. Add support for Jetson                                                                |
 
@@ -176,8 +177,11 @@ For dataset license, please check [this](https://github.com/NVlabs/FoundationSte
 - Q: I have two or multiple RGB cameras, can I run this? <br>
   A: You can first rectify a pair of images using this [OpenCV function](https://docs.opencv.org/4.x/d9/d0c/group__calib3d.html#ga617b1685d4059c6040827800e72ad2b6) into stereo image pair (now they don't have relative rotations), then feed into FoundationStereo.
 
+- Q: How to run on Windows? <br>
+  A: See [this](https://github.com/NVlabs/FoundationStereo/issues/219).
+
 - Q: Can I use it for commercial purpose? <br>
-  A: We released a commercial version [here](https://catalog.ngc.nvidia.com/orgs/nvidia/teams/tao/models/foundationstereo).
+  A: We released a commercial version [here](https://catalog.ngc.nvidia.com/orgs/nvidia/teams/tao/models/foundationstereo). You can also drop me an email at bowenw@nvidia.com for further inquiries.
 
 
 # BibTeX
