@@ -26,7 +26,7 @@ import sys
 code_dir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(f'{code_dir}/../')
 
-from Utils import *
+from Utils import vis_disparity, depth2xyzmap, toOpen3dCloud, set_seed
 from core.foundation_stereo import FoundationStereo
 from core.utils.utils import InputPadder
 

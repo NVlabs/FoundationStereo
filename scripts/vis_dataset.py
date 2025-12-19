@@ -1,7 +1,9 @@
 import os,sys
 code_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(f'{code_dir}/../')
-from Utils import *
+import argparse
+import imageio
+from Utils import depth_uint8_decoding, vis_disparity
 
 
 if __name__ == "__main__":

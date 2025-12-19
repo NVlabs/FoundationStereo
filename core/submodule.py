@@ -13,7 +13,6 @@ import torch.nn.functional as F
 import numpy as np
 code_dir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(f'{code_dir}/../')
-from Utils import *
 
 
 def _is_contiguous(tensor: torch.Tensor) -> bool:
