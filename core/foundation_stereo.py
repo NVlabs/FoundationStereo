@@ -7,6 +7,8 @@
 # license agreement from NVIDIA CORPORATION is strictly prohibited.
 
 
+import argparse
+
 import torch,pdb,logging,timm
 import torch.nn as nn
 import torch.nn.functional as F
@@ -130,8 +132,18 @@ class hourglass(nn.Module):
 
 
 
-class FoundationStereo(nn.Module, huggingface_hub.PyTorchModelHubMixin):
-    def __init__(self, args):
+class FoundationStereo(nn.Module, huggingface_hub.PyTorchModelHubMixin,
+                       repo_url="https://github.com/NVlabs/FoundationStereo",
+                       paper_url="https://huggingface.co/papers/2501.09898",
+                       pipeline_tag="depth-estimation",
+                       license="other",
+                       coders={
+                            argparse.Namespace : (
+                                lambda x: vars(x),
+                                lambda data: argparse.Namespace(**data),
+                            )
+   }):
+    def __init__(self, args: argparse.Namespace):
         super().__init__()
         self.args = args
 
