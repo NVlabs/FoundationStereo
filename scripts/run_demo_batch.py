@@ -34,9 +34,10 @@ def set_seed(random_seed):
     np.random.seed(random_seed)
     random.seed(random_seed)
     torch.manual_seed(random_seed)
-    torch.cuda.manual_seed_all(random_seed)
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = False
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(random_seed)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
 
 class CuSFMDataInference:
     def __init__(self, args):
@@ -378,7 +379,7 @@ if __name__ == "__main__":
         default=32,
         help='number of flow-field updates during forward pass')
     parser.add_argument(
-        '--get_pc', type=bool, default=False, help='get point cloud output')
+        '--get_pc', action='store_true', help='get point cloud output')
     parser.add_argument(
         '--z_far',
         default=10,
@@ -397,8 +398,7 @@ if __name__ == "__main__":
         '--num_gpus', type=int, default=1, help='number of GPUs to use')
     parser.add_argument(
         '--also_generate_for_right_camera',
-        type=bool,
-        default=False,
+        action='store_true',
         help='whether to generate depth for right camera')
     args = parser.parse_args()
 
