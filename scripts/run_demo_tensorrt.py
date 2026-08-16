@@ -72,10 +72,10 @@ def inference(left_img_path: str, right_img_path: str, model, args: argparse.Nam
 
     vis = vis_disparity(left_disp)
     vis = np.concatenate([input_left, vis], axis=1)
-    imageio.imwrite(os.path.join(args.save_path, 'visual', left_img_path.split('/')[-1]), vis)
+    imageio.imwrite(os.path.join(args.save_path, 'visual', os.path.basename(left_img_path)), vis)
 
     if args.pc:
-        save_path = left_img_path.split('/')[-1].split('.')[0] + '.ply'
+        save_path = os.path.splitext(os.path.basename(left_img_path))[0] + '.ply'
         baseline = 193.001/1e3
         doffs = 0
         K = np.array([1998.842, 0, 588.364,
