@@ -125,7 +125,7 @@ class ResnetBasicBlock(nn.Module):
     if self.norm_layer is not None:
       self.bn1 = norm_layer(planes)
     self.relu = nn.ReLU(inplace=True)
-    self.conv2 = nn.Conv2d(planes, planes, kernel_size=kernel_size, stride=stride, bias=bias, padding=padding)
+    self.conv2 = nn.Conv2d(planes, planes, kernel_size=kernel_size, stride=1, bias=bias, padding=padding)
     if self.norm_layer is not None:
       self.bn2 = norm_layer(planes)
     self.downsample = downsample
@@ -164,7 +164,7 @@ class ResnetBasicBlock3D(nn.Module):
     if self.norm_layer is not None:
       self.bn1 = norm_layer(planes)
     self.relu = nn.ReLU(inplace=True)
-    self.conv2 = nn.Conv3d(planes, planes, kernel_size=kernel_size, stride=stride, bias=bias, padding=padding)
+    self.conv2 = nn.Conv3d(planes, planes, kernel_size=kernel_size, stride=1, bias=bias, padding=padding)
     if self.norm_layer is not None:
       self.bn2 = norm_layer(planes)
     self.downsample = downsample
@@ -213,13 +213,13 @@ class FlashMultiheadAttention(nn.Module):
         K = self.k_proj(key)
         V = self.v_proj(value)
 
-        Q = Q.view(Q.size(0), Q.size(1), self.num_heads, self.head_dim)
-        K = K.view(K.size(0), K.size(1), self.num_heads, self.head_dim)
-        V = V.view(V.size(0), V.size(1), self.num_heads, self.head_dim)
+        Q = Q.view(B, L, self.num_heads, self.head_dim).transpose(1, 2)
+        K = K.view(B, L, self.num_heads, self.head_dim).transpose(1, 2)
+        V = V.view(B, L, self.num_heads, self.head_dim).transpose(1, 2)
 
-        attn_output = F.scaled_dot_product_attention(Q, K, V)
+        attn_output = F.scaled_dot_product_attention(Q, K, V, attn_mask=attn_mask)
 
-        attn_output = attn_output.reshape(B,L,-1)
+        attn_output = attn_output.transpose(1, 2).reshape(B, L, -1)
         output = self.out_proj(attn_output)
 
         return output
@@ -531,9 +531,9 @@ class ChannelAttentionEnhancement(nn.Module):
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
         self.max_pool = nn.AdaptiveMaxPool2d(1)
 
-        self.fc = nn.Sequential(nn.Conv2d(in_planes, in_planes // 16, 1, bias=False),
+        self.fc = nn.Sequential(nn.Conv2d(in_planes, in_planes // ratio, 1, bias=False),
                                nn.ReLU(),
-                               nn.Conv2d(in_planes // 16, in_planes, 1, bias=False))
+                               nn.Conv2d(in_planes // ratio, in_planes, 1, bias=False))
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
