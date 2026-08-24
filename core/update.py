@@ -150,6 +150,8 @@ class BasicSelectiveMultiUpdateBlock(nn.Module):
         motion_features = torch.cat([inp[0], motion_features], dim=1)
         if self.args.n_gru_layers > 1:
             net[0] = self.gru04(att[0], net[0], motion_features, interp(net[1], net[0]))
+        else:
+            net[0] = self.gru04(att[0], net[0], motion_features)
 
         delta_disp = self.disp_head(net[0])
 
