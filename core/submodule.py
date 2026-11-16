@@ -399,7 +399,8 @@ def build_gwc_volume(refimg_fea, targetimg_fea, maxdisp, num_groups, stride=1):
     """
     B, C, H, W = refimg_fea.shape
     volume = refimg_fea.new_zeros([B, num_groups, maxdisp, H, W])
-    for i in range(maxdisp):
+    # Steps from W on only write empty slices. Skipping them keeps zero-size tensors out of exported graphs.
+    for i in range(min(maxdisp, W)):
         if i > 0:
             volume[:, :, i, :, i:] = groupwise_correlation(refimg_fea[:, :, :, i:], targetimg_fea[:, :, :, :-i], num_groups)
         else:
@@ -415,7 +416,8 @@ def build_concat_volume(refimg_fea, targetimg_fea, maxdisp):
     for i in range(maxdisp):
         if i > 0:
             volume[:, :C, i, :, :] = refimg_fea[:, :, :, :]
-            volume[:, C:, i, :, i:] = targetimg_fea[:, :, :, :-i]
+            if i < W:  # same reason as in build_gwc_volume
+                volume[:, C:, i, :, i:] = targetimg_fea[:, :, :, :-i]
         else:
             volume[:, :C, i, :, :] = refimg_fea
             volume[:, C:, i, :, :] = targetimg_fea
