@@ -13,7 +13,6 @@ import torch.nn.functional as F
 import sys,os
 code_dir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(f'{code_dir}/../')
-import torchvision
 from core.update import BasicSelectiveMultiUpdateBlock
 from core.extractor import ContextNetDino, Feature
 from core.geometry import Combined_Geo_Encoding_Volume
@@ -44,8 +43,10 @@ def normalize_image(img):
     '''
     @img: (B,C,H,W) in range 0-255, RGB order
     '''
-    tf = torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], inplace=False)
-    return tf(img/255.0).contiguous()
+    img = img/255.0
+    mean = torch.tensor([0.485, 0.456, 0.406], dtype=img.dtype, device=img.device).reshape(1, 3, 1, 1)
+    std = torch.tensor([0.229, 0.224, 0.225], dtype=img.dtype, device=img.device).reshape(1, 3, 1, 1)
+    return ((img - mean) / std).contiguous()
 
 
 class hourglass(nn.Module):
