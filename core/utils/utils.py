@@ -46,7 +46,7 @@ def bilinear_sampler(img, coords, mode='bilinear', mask=False, low_memory=False)
     H, W = img.shape[-2:]
     xgrid, ygrid = coords.split([1,1], dim=-1)
     xgrid = 2*xgrid/(W-1) - 1   # Normalize to [-1,1]
-    assert torch.unique(ygrid).numel() == 1 and H == 1 # This is a stereo problem
+    assert H == 1 # This is a stereo problem
     grid = torch.cat([xgrid, ygrid], dim=-1).to(img.dtype)
     with cudnn.flags(enabled=False):
         img = F.grid_sample(img.contiguous(), grid.contiguous(), align_corners=True)
